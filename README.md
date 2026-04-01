@@ -156,7 +156,7 @@ define: {
 
 ```
 .
-├── src/                  # 核心源码（1902 个文件）
+├── src/                  # 核心源码（1908 个文件）
 │   ├── entrypoints/
 │   │   └── cli.tsx       # ← 构建入口点
 │   ├── main.tsx          # 主 REPL 逻辑（由 cli.tsx 动态 import）
@@ -167,25 +167,25 @@ define: {
 │   ├── bridge/           # IDE 桥接层（31）
 │   ├── buddy/            # 子代理系统（6）
 │   ├── cli/              # CLI 参数解析（19）
-│   ├── commands/         # 斜杠命令（207）
-│   ├── components/       # 终端 UI 组件（389）
+│   ├── commands/         # 斜杠命令（191）
+│   ├── components/       # 终端 UI 组件（390）
 │   ├── constants/        # 全局常量（21）
 │   ├── context/          # 上下文管理（9）
-│   ├── entrypoints/      # 各类入口点（8）
+│   ├── entrypoints/      # 各类入口点（12）
 │   ├── hooks/            # 生命周期钩子（104）
-│   ├── ink/              # 自研终端渲染引擎（96）
+│   ├── ink/              # 自研终端渲染引擎（98）
 │   ├── keybindings/      # 键盘快捷键（14）
 │   ├── memdir/           # 记忆目录（8）
 │   ├── migrations/       # 数据迁移（11）
 │   ├── plugins/          # 插件系统（2）
 │   ├── remote/           # 远程执行（4）
-│   ├── services/         # 核心服务（130）
+│   ├── services/         # 核心服务（133）
 │   ├── skills/           # 技能系统（20）
 │   ├── state/            # 状态管理（6）
 │   ├── tasks/            # 任务执行（12）
-│   ├── tools/            # 工具实现（184）
-│   ├── types/            # 类型定义（11）
-│   ├── utils/            # 工具函数（564）
+│   ├── tools/            # 工具实现（190）
+│   ├── types/            # 类型定义（12）
+│   ├── utils/            # 工具函数（566）
 │   ├── vim/              # Vim 模式（5）
 │   └── voice/            # 语音输入（1）
 ├── vendor/               # 内部 vendor 代码（4 文件）
@@ -202,7 +202,7 @@ define: {
 | 指标 | 数值 |
 |------|------|
 | 源文件总数 | 4,756 |
-| 核心源码（src/ + vendor/） | 1,906 文件 |
+| 核心源码（src/ + vendor/） | 1,912 文件 |
 | 第三方依赖（node_modules/） | 2,850 + npm 安装 |
 | Source Map 大小 | 57 MB |
 | 构建产出大小 | 22 MB |

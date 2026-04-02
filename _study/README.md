@@ -49,7 +49,7 @@
 - [x] deep-dives/terminal-ui.md
 - [x] deep-dives/auth-oauth.md
 - [x] deep-dives/mcp-system.md
-- [ ] deep-dives/command-system.md
+- [x] deep-dives/command-system.md
 - [ ] files/src/main.tsx.md
 - [ ] files/src/QueryEngine.md
 - [ ] files/src/Task.md

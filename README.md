@@ -180,7 +180,7 @@ define: {
 .
 ├── _study/               # 学习笔记（本项目核心产出）
 │   ├── README.md         # 学习地图 & 进度追踪
-│   ├── architecture/     # 架构总览、数据流、feature flags
+│   ├── architecture/     # 整体架构、数据流、feature flags 完整分析
 │   ├── deep-dives/       # 核心系统专题深入分析
 │   └── files/            # 逐文件注解（镜像 src/ 结构）
 ├── src/                  # 还原的核心源码（1,908 个文件）

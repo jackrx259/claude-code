@@ -6,21 +6,24 @@
 
 | 目录 | 内容 |
 |---|---|
-| `architecture/` | 整体架构图、数据流、系统设计 |
+| `architecture/` | 整体架构、数据流、feature flags 完整分析 |
 | `deep-dives/` | 按核心系统专题深入分析 |
 | `files/` | 镜像项目结构，逐文件/目录注解 |
 
 ## 学习路线（推荐顺序）
 
 ```
-1. architecture/overview.md        ← 先建立整体认知
-2. architecture/data-flow.md       ← 理解请求如何流转
-3. deep-dives/query-engine.md      ← 核心：多轮 API 编排
-4. deep-dives/tool-system.md       ← 核心：49 个工具实现
-5. deep-dives/task-system.md       ← 任务状态机
-6. deep-dives/terminal-ui.md       ← Ink/React 终端渲染
-7. deep-dives/auth-oauth.md        ← 认证体系
-8. files/src/                      ← 按需查阅具体文件
+1. architecture/overview.md        ← 先建立整体认知（四层架构、启动链、构建体系）
+2. architecture/data-flow.md       ← 一次用户输入的完整生命周期
+3. architecture/feature-flags.md   ← 90 个编译期 feature flag 完整分析
+4. deep-dives/query-engine.md      ← 核心：多轮 API 编排（QueryEngine 类）
+5. deep-dives/tool-system.md       ← 核心：49 个工具实现与权限模型
+6. deep-dives/task-system.md       ← 任务状态机（7 种任务类型）
+7. deep-dives/terminal-ui.md       ← Ink/React 终端渲染体系
+8. deep-dives/mcp-system.md        ← MCP 协议集成
+9. deep-dives/auth-oauth.md        ← 认证体系（OAuth、API Key、MDM、AWS）
+10. deep-dives/command-system.md   ← Slash 命令体系
+11. files/src/                     ← 按需查阅具体文件注解
 ```
 
 ## 项目关键数字（快速定位）
@@ -38,7 +41,7 @@
 ## 进度追踪
 
 - [x] architecture/overview.md
-- [ ] architecture/data-flow.md
+- [x] architecture/data-flow.md
 - [ ] architecture/feature-flags.md
 - [ ] deep-dives/query-engine.md
 - [ ] deep-dives/tool-system.md

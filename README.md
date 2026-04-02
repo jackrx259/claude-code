@@ -1,25 +1,81 @@
-# Claude Code 源码还原与构建
+# Claude Code 源码学习计划
 
-## 从源码重新构建
+> 从 `@anthropic-ai/claude-code` v2.1.88 npm 包的 source map 中完整还原的 TypeScript 源代码，已配置为可本地编译运行。
+
+这是一个面向所有热爱学习 AI 工具工程实践的开发者的开源学习项目。Claude Code 是目前最复杂、最完整的 AI 编程助手之一，其源码涵盖了终端 UI 渲染、多轮 LLM 编排、工具系统设计、MCP 协议、OAuth 认证、任务调度等众多工程课题。读懂它，你会对 AI Native 应用的架构设计有全新的认知。
+
+---
+
+## 学习路径
+
+建议按以下顺序进行，从整体到局部，从宏观到微观：
+
+### 第一阶段：建立整体认知
+
+| 步骤 | 资料 | 目标 |
+|---|---|---|
+| 1 | [`_study/architecture/overview.md`](./_study/architecture/overview.md) | 理解四层架构、启动链、构建体系 |
+| 2 | [`_study/architecture/data-flow.md`](./_study/architecture/data-flow.md) | 跟踪一次用户输入的完整生命周期 |
+| 3 | [`_study/architecture/feature-flags.md`](./_study/architecture/feature-flags.md) | 理解编译期 feature flag 剪枝机制 |
+
+### 第二阶段：攻克核心系统
+
+| 步骤 | 资料 | 对应源码 |
+|---|---|---|
+| 4 | [`_study/deep-dives/query-engine.md`](./_study/deep-dives/query-engine.md) | `src/QueryEngine.ts` |
+| 5 | [`_study/deep-dives/tool-system.md`](./_study/deep-dives/tool-system.md) | `src/Tool.ts` + `src/tools/` |
+| 6 | [`_study/deep-dives/task-system.md`](./_study/deep-dives/task-system.md) | `src/Task.ts` + `src/tasks/` |
+| 7 | [`_study/deep-dives/terminal-ui.md`](./_study/deep-dives/terminal-ui.md) | `src/ink/` + `src/components/` |
+| 8 | [`_study/deep-dives/mcp-system.md`](./_study/deep-dives/mcp-system.md) | `src/services/mcp/` |
+| 9 | [`_study/deep-dives/auth-oauth.md`](./_study/deep-dives/auth-oauth.md) | `src/utils/`（auth 部分）|
+| 10 | [`_study/deep-dives/command-system.md`](./_study/deep-dives/command-system.md) | `src/commands.ts` + `src/commands/` |
+
+### 第三阶段：逐文件精读
+
+进入 [`_study/files/`](./_study/files/) 目录，按模块查阅具体文件的逐行分析笔记。
+这一阶段是长期积累的过程，建议结合具体问题驱动阅读。
+
+---
+
+## 未来蓝图
+
+这个学习计划正在持续建设中，欢迎任何人提交 PR 补充笔记、纠正错误、增加图示。
+
+计划中的内容包括：
+
+- **流程图**：用 Mermaid 绘制 QueryEngine 多轮循环、Tool 权限检查、OAuth 流程等关键流程
+- **对比分析**：Claude Code 与 Cursor、Aider、Continue 等工具的架构差异
+- **专题研究**：
+  - `src/ink/`：Anthropic 对 Ink 做了哪些深度定制？为什么要 fork？
+  - `src/main.tsx`：4600 行的超级初始化文件，逐段拆解
+  - Feature flags：90+ 个编译开关背后，哪些内部功能被隐藏了？
+  - Context compaction：超长任务不中断的秘密
+  - Worktree 隔离：Agent 如何在沙箱中安全执行写操作
+- **实验记录**：修改 feature flags 后重新构建，观察行为变化
+- **问题清单**：整理所有「待研究」问题，作为社区探索的方向
+
+**如果你在阅读中发现了有价值的东西，欢迎在 Issues 中分享，或直接在 `_study/` 目录下提交你的笔记。**
+
+---
+
+## 快速开始（本地构建）
+
 ```bash
-# 1. 安装 Bun（构建工具）
+# 1. 安装 Bun（macOS arm64）
 curl -LO https://github.com/oven-sh/bun/releases/latest/download/bun-darwin-aarch64.zip
 unzip bun-darwin-aarch64.zip -d /tmp/bun && sudo cp /tmp/bun/bun-darwin-aarch64/bun /usr/local/bin/bun
 
-# 2. 安装/更新依赖（可选，node_modules 已包含在仓库中）
+# 2. 安装依赖（node_modules 已包含，此步可选）
 pnpm install --registry https://registry.npmjs.org
 
 # 3. 构建
 bun run build.ts
 
-# 4. 运行
+# 4. 验证
 bun dist/cli.js --version
 ```
 
-从 `@anthropic-ai/claude-code` v2.1.88 npm 包中的 `cli.js.map` source map 文件还原出的完整源代码，并配置为可编译运行。
-
-## 效果验证
-
+**验证输出：**
 ```
 $ bun dist/cli.js --version
 2.1.88 (Claude Code)
@@ -29,7 +85,11 @@ Usage: claude [options] [command] [prompt]
 Claude Code - starts an interactive session by default...
 ```
 
-## 源码还原方法
+---
+
+## 源码是如何还原的
+
+npm 包 `@anthropic-ai/claude-code` 发布时附带了完整的 `cli.js.map` source map 文件，其中包含所有原始 TypeScript/TSX 的 `sourcesContent`。通过解析这个 source map，可以无损还原全部 4756 个源文件。
 
 ```bash
 # 1. 下载 npm 包
@@ -38,7 +98,7 @@ npm pack @anthropic-ai/claude-code --registry https://registry.npmjs.org
 # 2. 解压
 tar xzf anthropic-ai-claude-code-2.1.88.tgz
 
-# 3. 解析 cli.js.map，将 sourcesContent 按原始路径写出
+# 3. 从 source map 写出所有源文件
 node -e "
 const fs = require('fs'), path = require('path');
 const map = JSON.parse(fs.readFileSync('package/cli.js.map', 'utf8'));
@@ -55,156 +115,107 @@ for (let i = 0; i < map.sources.length; i++) {
 "
 ```
 
-source map 包含 **4756** 个源文件及完整 `sourcesContent`，可无损还原所有 TypeScript/TSX 原始代码。
+---
 
-## 构建环境搭建
+## 构建细节
 
-### 依赖
+### 依赖环境
 
-| 工具 | 用途 |
-|------|------|
-| [Bun](https://bun.sh) v1.3.11 | 构建工具（源码使用 `bun:bundle` 特性） |
-| [pnpm](https://pnpm.io) v10+ | 包管理 |
-| Node.js v18+ | 运行时 |
+| 工具 | 版本 | 用途 |
+|---|---|---|
+| [Bun](https://bun.sh) | v1.3.11 | 构建工具（必须，使用了 `bun:bundle` 专有特性）|
+| [pnpm](https://pnpm.io) | v10+ | 包管理 |
+| Node.js | v18+ | 运行时 |
 
-### 安装步骤
+### 为什么必须用 Bun 构建？
 
-```bash
-# 1. 安装 Bun（macOS arm64）
-curl -LO https://github.com/oven-sh/bun/releases/latest/download/bun-darwin-aarch64.zip
-unzip bun-darwin-aarch64.zip
-
-# 2. 安装依赖（pnpm + npm registry）
-pnpm install --registry https://registry.npmjs.org
-
-# 3. 构建
-bun run build.ts
-
-# 4. 运行
-bun dist/cli.js --version
-```
-
-## 构建说明
-
-### 为什么需要 Bun？
-
-源码中大量使用了 `bun:bundle` 的 `feature()` API：
+源码使用了 Bun bundler 专有的 `feature()` API，实现**编译期死代码消除**：
 
 ```typescript
 import { feature } from 'bun:bundle'
 
-// 编译期特性开关，Bun 构建时进行死代码消除
+// 编译时替换为 true/false，并消除对应分支
 const coordinatorModule = feature('COORDINATOR_MODE')
   ? require('./coordinator/coordinatorMode.js')
   : null
 ```
 
-这是 Bun bundler 的专有特性，等价于 webpack 的 `DefinePlugin`，在构建时静态替换为 `true`/`false` 并消除死分支。
-
-### 特性开关配置
-
-`build.ts` 中定义了 90+ 个特性开关，均已按**生产外部版本**的默认值设置：
-
-```typescript
-const featureFlags = {
-  BRIDGE_MODE: false,        // IDE 桥接（生产关闭）
-  COORDINATOR_MODE: false,   // 多代理协调（内部功能）
-  KAIROS: false,             // 助手模式（内部功能）
-  BUILTIN_EXPLORE_PLAN_AGENTS: true,  // 内置探索/计划代理（启用）
-  TOKEN_BUDGET: true,        // Token 预算显示（启用）
-  // ...等 80+ 个开关
-}
-```
+这等价于 webpack 的 `DefinePlugin`，但与 `build.ts` 中 90+ 个特性开关深度绑定，无法用其他打包器替代。
 
 ### MACRO 常量注入
 
-源码使用 `MACRO.VERSION` 等编译期常量（类似 C 语言的宏）：
-
 ```typescript
-console.log(`${MACRO.VERSION} (Claude Code)`)  // → "2.1.88 (Claude Code)"
-```
+// 源码中
+console.log(`${MACRO.VERSION} (Claude Code)`)
 
-在 `build.ts` 中通过 `define` 注入：
-
-```typescript
+// build.ts 中注入
 define: {
   'MACRO.VERSION': JSON.stringify('2.1.88'),
   'MACRO.BUILD_TIME': JSON.stringify(new Date().toISOString()),
   'MACRO.ISSUES_EXPLAINER': JSON.stringify('...'),
-  // ...
 }
 ```
 
-### 私有包处理
+### 私有包存根（stubs/）
 
-以下内部包不在公开 npm 中，已创建功能存根：
+以下 Anthropic 内部包不在公开 npm 中，已在 `stubs/` 目录创建功能存根以使构建通过：
 
-| 包名 | 说明 |
-|------|------|
-| `color-diff-napi` | 语法高亮 native 模块（存根：禁用高亮） |
-| `modifiers-napi` | macOS 按键修饰符 native 模块（存根：返回空） |
-| `@ant/claude-for-chrome-mcp` | Chrome 扩展 MCP 服务器（存根） |
-| `@anthropic-ai/mcpb` | MCP bundle 处理器（存根） |
-| `@anthropic-ai/sandbox-runtime` | 沙盒运行时（存根） |
+| 包名 | 存根策略 |
+|---|---|
+| `color-diff-napi` | 禁用颜色差异高亮（返回空实现）|
+| `modifiers-napi` | 禁用 macOS 按键修饰符检测（返回空）|
+| `@ant/claude-for-chrome-mcp` | Chrome 扩展 MCP 服务器（空实现）|
+| `@anthropic-ai/mcpb` | MCP bundle 处理器（用标准 MCP 替代）|
+| `@anthropic-ai/sandbox-runtime` | 沙盒运行时（空实现）|
 
-### commander 兼容性补丁
+### commander 补丁
 
-源码使用 `-d2e` 作为调试标志的短选项（多字符短选项），但 commander v14 只允许单字符短选项。
-已对 `node_modules/commander/lib/option.js` 做最小化补丁，将正则从 `/^-[^-]$/` 改为 `/^-[^-]+$/`。
+源码使用 `-d2e` 形式的多字符短选项，而 commander v14 只允许单字符短选项。`patches/` 目录中有一个最小化补丁，将 option 解析正则从 `/^-[^-]$/` 改为 `/^-[^-]+$/`。
+
+---
 
 ## 目录结构
 
 ```
 .
-├── src/                  # 核心源码（1908 个文件）
-│   ├── entrypoints/
-│   │   └── cli.tsx       # ← 构建入口点
-│   ├── main.tsx          # 主 REPL 逻辑（由 cli.tsx 动态 import）
-│   ├── Tool.ts           # 工具类型系统
-│   ├── Task.ts           # 任务管理
-│   ├── QueryEngine.ts    # 查询引擎
-│   ├── assistant/        # 会话历史管理
-│   ├── bridge/           # IDE 桥接层（31）
-│   ├── buddy/            # 子代理系统（6）
-│   ├── cli/              # CLI 参数解析（19）
-│   ├── commands/         # 斜杠命令（191）
-│   ├── components/       # 终端 UI 组件（390）
-│   ├── constants/        # 全局常量（21）
-│   ├── context/          # 上下文管理（9）
-│   ├── entrypoints/      # 各类入口点（12）
-│   ├── hooks/            # 生命周期钩子（104）
-│   ├── ink/              # 自研终端渲染引擎（98）
-│   ├── keybindings/      # 键盘快捷键（14）
-│   ├── memdir/           # 记忆目录（8）
-│   ├── migrations/       # 数据迁移（11）
-│   ├── plugins/          # 插件系统（2）
-│   ├── remote/           # 远程执行（4）
-│   ├── services/         # 核心服务（133）
-│   ├── skills/           # 技能系统（20）
-│   ├── state/            # 状态管理（6）
-│   ├── tasks/            # 任务执行（12）
-│   ├── tools/            # 工具实现（190）
-│   ├── types/            # 类型定义（12）
-│   ├── utils/            # 工具函数（566）
-│   ├── vim/              # Vim 模式（5）
-│   └── voice/            # 语音输入（1）
+├── _study/               # 学习笔记（本项目核心产出）
+│   ├── README.md         # 学习地图 & 进度追踪
+│   ├── architecture/     # 架构总览、数据流、feature flags
+│   ├── deep-dives/       # 核心系统专题深入分析
+│   └── files/            # 逐文件注解（镜像 src/ 结构）
+├── src/                  # 还原的核心源码（1,908 个文件）
+│   ├── entrypoints/      # CLI 入口（12 文件）
+│   ├── main.tsx          # 全局初始化（4,600+ 行）
+│   ├── QueryEngine.ts    # 多轮 API 编排引擎
+│   ├── Tool.ts           # 工具系统基础定义
+│   ├── Task.ts           # 任务系统基础定义
+│   ├── commands/         # Slash 命令实现（191 文件）
+│   ├── components/       # 终端 UI 组件（390 文件）
+│   ├── hooks/            # React hooks（104 文件）
+│   ├── ink/              # 自研终端渲染引擎（98 文件）
+│   ├── services/         # 核心服务（133 文件）
+│   ├── tools/            # 工具实现（190 文件）
+│   └── utils/            # 工具函数（566 文件）
+├── stubs/                # 私有包存根
 ├── vendor/               # 内部 vendor 代码（4 文件）
-├── node_modules/         # 依赖（pnpm 安装 + 私有包存根）
-├── dist/                 # 构建产出
-│   └── cli.js            # 可执行文件（22MB）
-├── build.ts              # Bun 构建脚本（含特性开关配置）
-├── tsconfig.json         # TypeScript 配置
-└── package.json          # 项目配置
+├── patches/              # pnpm 补丁（commander 多字符短选项）
+├── build.ts              # Bun 构建脚本（含 90+ feature flags）
+├── dist/cli.js           # 构建产出（22MB 单文件 ESM）
+└── package.json
 ```
 
-## 统计
+---
+
+## 关键统计
 
 | 指标 | 数值 |
-|------|------|
+|---|---|
+| 包版本 | 2.1.88 |
 | 源文件总数 | 4,756 |
 | 核心源码（src/ + vendor/） | 1,912 文件 |
-| 第三方依赖（node_modules/） | 2,850 + npm 安装 |
 | Source Map 大小 | 57 MB |
-| 构建产出大小 | 22 MB |
-| 包版本 | 2.1.88 |
-| 特性开关数量 | 90 个 |
+| 构建产物大小 | 22 MB |
+| Feature flags 数量 | 90+ |
+| 工具实现数量 | 49 |
+| React UI 组件数量 | 146 |
+| Slash 命令数量 | 105+ |

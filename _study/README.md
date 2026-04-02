@@ -45,7 +45,7 @@
 - [x] architecture/feature-flags.md
 - [x] deep-dives/query-engine.md
 - [x] deep-dives/tool-system.md
-- [ ] deep-dives/task-system.md
+- [x] deep-dives/task-system.md
 - [ ] deep-dives/terminal-ui.md
 - [ ] deep-dives/auth-oauth.md
 - [ ] deep-dives/mcp-system.md

@@ -43,7 +43,7 @@
 - [x] architecture/overview.md
 - [x] architecture/data-flow.md
 - [x] architecture/feature-flags.md
-- [ ] deep-dives/query-engine.md
+- [x] deep-dives/query-engine.md
 - [ ] deep-dives/tool-system.md
 - [ ] deep-dives/task-system.md
 - [ ] deep-dives/terminal-ui.md

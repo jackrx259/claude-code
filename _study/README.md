@@ -46,7 +46,7 @@
 - [x] deep-dives/query-engine.md
 - [x] deep-dives/tool-system.md
 - [x] deep-dives/task-system.md
-- [ ] deep-dives/terminal-ui.md
+- [x] deep-dives/terminal-ui.md
 - [ ] deep-dives/auth-oauth.md
 - [ ] deep-dives/mcp-system.md
 - [ ] deep-dives/command-system.md

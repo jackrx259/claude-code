@@ -182,10 +182,10 @@ define: {
 │   ├── README.md         # 学习地图 & 进度追踪
 │   ├── architecture/     # 整体架构、数据流、feature flags 完整分析
 │   ├── deep-dives/       # 核心系统专题深入分析
-│   └── files/            # 逐文件注解（镜像 src/ 结构）
+│   └── files/            # 逐文件注解，镜像 src/ 目录结构
 ├── src/                  # 还原的核心源码（1,908 个文件）
 │   ├── entrypoints/      # CLI 入口（12 文件）
-│   ├── main.tsx          # 全局初始化（4,600+ 行）
+│   ├── main.tsx          # 全局初始化（4,683 行）
 │   ├── QueryEngine.ts    # 多轮 API 编排引擎
 │   ├── Tool.ts           # 工具系统基础定义
 │   ├── Task.ts           # 任务系统基础定义

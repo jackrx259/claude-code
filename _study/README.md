@@ -37,7 +37,7 @@
 
 ## 进度追踪
 
-- [ ] architecture/overview.md
+- [x] architecture/overview.md
 - [ ] architecture/data-flow.md
 - [ ] architecture/feature-flags.md
 - [ ] deep-dives/query-engine.md

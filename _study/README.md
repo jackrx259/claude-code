@@ -54,7 +54,7 @@
 - [x] files/src/QueryEngine/README.md
 - [x] files/src/Task/README.md
 - [x] files/src/Tool/README.md
-- [x] files/src/tools/ (README + BashTool.md + AgentTool.md)
+- [x] files/src/tools/README.md（含 BashTool、AgentTool 深入分析）
 - [x] files/src/services/README.md
 - [x] files/src/components/README.md
 - [x] files/src/entrypoints/README.md

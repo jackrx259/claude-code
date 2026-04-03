@@ -35,6 +35,96 @@
 进入 [`_study/files/`](./_study/files/) 目录，按模块查阅具体文件的逐行分析笔记。
 这一阶段是长期积累的过程，建议结合具体问题驱动阅读。
 
+| 文件 | 内容 |
+|---|---|
+| [`files/src/README.md`](./_study/files/src/README.md) | `src/` 目录整体导览 |
+| [`files/src/main.tsx/README.md`](./_study/files/src/main.tsx/README.md) | 4683 行全局初始化逐段拆解 |
+| [`files/src/QueryEngine/README.md`](./_study/files/src/QueryEngine/README.md) | QueryEngine 类字段与方法注解 |
+| [`files/src/Task/README.md`](./_study/files/src/Task/README.md) | Task 类型定义与状态机注解 |
+| [`files/src/Tool/README.md`](./_study/files/src/Tool/README.md) | Tool 接口与 buildTool 工厂注解 |
+| [`files/src/tools/README.md`](./_study/files/src/tools/README.md) | 44 个工具实现目录（含 BashTool、AgentTool 深入分析）|
+| [`files/src/components/README.md`](./_study/files/src/components/README.md) | 146 个 React 终端 UI 组件 |
+| [`files/src/screens/README.md`](./_study/files/src/screens/README.md) | REPL.tsx 主交互循环（5005 行）|
+| [`files/src/hooks/README.md`](./_study/files/src/hooks/README.md) | 87 个 React hooks |
+| [`files/src/services/README.md`](./_study/files/src/services/README.md) | 39 个服务子目录（API、MCP、认证、分析）|
+| [`files/src/state/README.md`](./_study/files/src/state/README.md) | AppState 形状、Store 实现、selectors |
+| [`files/src/entrypoints/README.md`](./_study/files/src/entrypoints/README.md) | CLI 入口与快速路径分流 |
+| [`files/src/utils/README.md`](./_study/files/src/utils/README.md) | 330+ 工具文件按子目录分类概览 |
+| [`files/build/build.ts.md`](./_study/files/build/build.ts.md) | 构建脚本与 90+ feature flags 详解 |
+
+---
+
+## Agent 开发工程模式
+
+[`_study/agent-design-guide.md`](./_study/agent-design-guide.md) 从源码中提炼了构建生产级 agent 的核心工程模式，每个模式附 Python 示例。以下是主要内容索引：
+
+### 会话与循环
+
+**会话状态封装**：一个对话引擎实例对应一段对话的完整生命周期，跨多轮调用持续持有消息历史、token 累计用量和文件读取缓存。每轮共享同一实例，而非每轮重建。
+
+**消息规范化**：每次 API 调用前对消息列表做规范化（去除 UI 专用字段、合并相邻同角色消息），而非只在首次调用时处理。原因：对话压缩等操作会在循环中途修改消息列表。
+
+**循环终止条件**：除 `end_turn` 外，需要明确处理最大轮次、Token 预算上限、用户中断三种终止路径。
+
+→ 详见：[`deep-dives/query-engine.md`](./_study/deep-dives/query-engine.md)
+
+### 工具系统
+
+**工具定义协议**：工具不只是可调用对象，还携带 `is_read_only`、`is_destructive`、`is_concurrency_safe`、`max_result_chars`、`system_prompt_fragment` 等元数据，供权限系统、调度器、系统提示词构建器分别使用。
+
+**fail-closed 默认值**：所有安全相关布尔属性默认取保守一侧（`is_concurrency_safe=False`、`is_read_only=False`）。工具必须显式声明才能获得宽松权限。
+
+**工具并发调度**：同批次工具调用中，任意一个声明不可并发则全部串行。全部声明安全时才并行执行。
+
+**结果大小管理**：结果超过 `max_result_chars` 时写入磁盘临时文件，消息中只传路径和预览，防止单条结果消耗过多 context。
+
+**工具延迟加载**：不常用工具不出现在初始 prompt 中，通过 ToolSearch 工具按需加载 schema，减少初始 token 消耗。
+
+→ 详见：[`deep-dives/tool-system.md`](./_study/deep-dives/tool-system.md)
+
+### Context Window 管理
+
+**三级应对策略**：
+1. Token 监控分级（ok / warning / danger / critical）
+2. 对话压缩：超阈值时调用模型生成语义摘要，替换原始历史，压缩边界前的消息立即从内存释放
+3. 工具结果预算：注入前截断单条过大结果
+
+→ 详见：[`architecture/data-flow.md`](./_study/architecture/data-flow.md)
+
+### 权限模型
+
+**三层检查**：输入验证（工具自身）→ 通用权限检查（永久规则 + 模式决策）→ 工具级权限覆盖。
+
+**权限模式**：`interactive`（危险操作需确认）/ `bypass`（无监督自动化）/ `accept_edits`（文件修改静默放行）/ `plan_only`（禁用所有写工具）。
+
+**规则来源分离**：权限规则按来源（配置文件、命令、hooks）分组存储，支持按来源整体撤销，不影响其他来源。
+
+→ 详见：[`deep-dives/tool-system.md`](./_study/deep-dives/tool-system.md)
+
+### 多 Agent 与任务调度
+
+**子 Agent 隔离**：子 Agent 持有独立的会话引擎实例，不能直接写入父 Agent 的全局状态（`setAppState` 为 no-op），只能通过返回值传递结果。
+
+**任务状态机**：`pending → running → completed | failed | killed`，终态不可逆转。任务输出流式写入磁盘，调用方通过偏移量增量读取，实现执行与展示解耦。
+
+**孤儿清理**：任务记录创建它的 Agent ID，父 Agent 退出时统一清理其遗留任务。
+
+→ 详见：[`deep-dives/task-system.md`](./_study/deep-dives/task-system.md)
+
+### 系统提示词与持久化
+
+**动态组装**：系统提示词在每次请求前由多个来源合并：基础提示词 + 各工具的说明片段 + 按目录层级加载的配置文件 + MCP server 说明 + 调用方追加内容。
+
+**预写日志**：用户消息在进入 API 循环**之前**写入磁盘，确保进程崩溃后仍可从 transcript 文件恢复会话。
+
+**启动并行预取**：凭据读取、MCP 连接建立、配置加载等慢操作在主流程开始时立即并行触发，在真正需要时才 await，消除串行等待的启动延迟。
+
+→ 详见：[`deep-dives/auth-oauth.md`](./_study/deep-dives/auth-oauth.md)、[`deep-dives/mcp-system.md`](./_study/deep-dives/mcp-system.md)
+
+### 完整 Python 示例
+
+[**→ Agent 设计精要（含 Python 示例）**](./_study/agent-design-guide.md)
+
 ---
 
 ## 未来蓝图

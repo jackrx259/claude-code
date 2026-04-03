@@ -50,10 +50,10 @@
 - [x] deep-dives/auth-oauth.md
 - [x] deep-dives/mcp-system.md
 - [x] deep-dives/command-system.md
-- [ ] files/src/main.tsx.md
-- [ ] files/src/QueryEngine.md
+- [x] files/src/main.tsx.md
+- [x] files/src/QueryEngine.md
 - [ ] files/src/Task.md
-- [ ] files/src/Tool.md
+- [x] files/src/Tool.md
 - [ ] files/src/tools/
 - [ ] files/src/services/
 - [ ] files/src/components/

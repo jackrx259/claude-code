@@ -50,11 +50,16 @@
 - [x] deep-dives/auth-oauth.md
 - [x] deep-dives/mcp-system.md
 - [x] deep-dives/command-system.md
-- [x] files/src/main.tsx.md
-- [x] files/src/QueryEngine.md
-- [ ] files/src/Task.md
-- [x] files/src/Tool.md
-- [ ] files/src/tools/
-- [ ] files/src/services/
-- [ ] files/src/components/
+- [x] files/src/main.tsx/README.md
+- [x] files/src/QueryEngine/README.md
+- [x] files/src/Task/README.md
+- [x] files/src/Tool/README.md
+- [x] files/src/tools/ (README + BashTool.md + AgentTool.md)
+- [x] files/src/services/README.md
+- [x] files/src/components/README.md
+- [x] files/src/entrypoints/README.md
+- [x] files/src/hooks/README.md
+- [x] files/src/state/README.md（含 context/）
+- [x] files/src/screens/README.md
+- [x] files/src/utils/README.md
 - [ ] files/build/build.ts.md
